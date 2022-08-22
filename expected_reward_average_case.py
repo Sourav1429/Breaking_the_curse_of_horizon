@@ -14,6 +14,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 from tqdm import tqdm
+from estimate_reward import est_rew
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -53,27 +54,32 @@ def get_w(data,weight_obj,behaviour_policy,target_policy,pair=0):
             K.append(sample1[2]==sample2[2]);
         return (state1,state2,w_state1,w_state2,w_next_state1,w_next_state2,beta1,beta2,K);
             
-T = 100 # number of times episode is run
+T = 1000 # number of times episode is run
 nS = 4 #enter number of states
 nA = 2 #let this be 2 only
 rep_cost = 0.7 #replacement cost
 behaviour_policy = np.array([[0.6,0.4],[0.3,0.7],[0.4,0.6],[0.1,0.9]]);
 state = 0
 batch_size = 50
+l_rate=0.05
 weight_obj = weights_parameterization.weights(nS, 1)
-optimizerW = optim.Adam(weight_obj.parameters(),lr=0.1)
+optimizerW = optim.Adam(weight_obj.parameters(),lr=l_rate)
 
 obj = Simulate_episode(T, nS, nA, rep_cost, behaviour_policy, state);
 data,target_policy = obj.play_episode()
+#target_policy = [0,1,1,1];
 print("Behaviour policy:",behaviour_policy);
 print("Target_policy:",target_policy);
 input("Should we continue?");
 for _ in tqdm(range(T)):
+    for s in range(nS):
+        print(weight_obj(s));
+        #print("================");
     batch,reward = get_batch(data,batch_size,T);
     pairs = list(product(batch, repeat=2))
     state1,state2,w_state1,w_state2,w_next_state1,w_next_state2,beta1,beta2,K = get_w(pairs,weight_obj,behaviour_policy,target_policy);
     Z_w_state = get_w(batch, weight_obj, behaviour_policy, target_policy,1);
-    print(len(state1)," is the number of samples used after pairing");
+    #print(len(state1)," is the number of samples used after pairing");
     W_loss = 0;
     for i in range(len(state1)):
         W_loss += (beta1[i]*(w_state1[i]/Z_w_state) - (w_next_state1[i]/Z_w_state))*(beta2[i]*(w_state2[i]/Z_w_state) - (w_next_state2[i]/Z_w_state))*K[i]
@@ -82,3 +88,6 @@ for _ in tqdm(range(T)):
     W_loss.backward()
     optimizerW.step()
     optimizerW.zero_grad()
+
+##Now calculating reward
+#object_rew = est_rew()

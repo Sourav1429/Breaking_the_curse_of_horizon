@@ -33,8 +33,8 @@ class Machine_Replacement:
 nA=2;
 cost=np.linspace(0.1, 0.99,nS);
 rep_cost=0.7
-obj = Machine_Replacement(cost,rep_cost,nS,nA);
+obj = Machine_Replacement(rep_cost,nS,nA);
 print("Probability matrix");
 print(obj.gen_probability());
 print("Reward Matrix");
-print(obj.gen_reward());   '''             
+print(obj.gen_reward());          '''

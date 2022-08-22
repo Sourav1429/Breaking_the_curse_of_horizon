@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Aug 22 11:33:54 2022
+
+@author: Sourav
+"""
+import weights_parameterization
+import torch
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
+class est_rew:
+    def __init__(self,state_distribution,target_policy,behaviour_policy,data,n,nS=4):
+        self.state_distribution = state_distribution  #list of distribution of all states in state space
+        self.target_policy = target_policy; #to store target_policy that we try to achieve
+        self.behaviour_policy = behaviour_policy; #to store the behaviour policy that we follow
+        self.data = data;# dictionary {'state':[list of current state] ,'action':[list of actions taken],'next_state':[list of the next states],'reward':[reward observed for taking such transition and performing this action]}
+        self.n = len(data['state'])#total number of samples
+        self.weight_obj = weights_parameterization.weights(nS, 1)
+    def find_reward(self):
+        num,den = 0,0
+        for i in range(self.n):
+            s,a,s_next,r = self.weight_obj(self.data['state'][i]),self.data['action'][i],self.weight_obj(self.data['next_state'][i]),self.data['reward'][i]
+            num = num + self.state_distribution[s] * (self.target_policy[s,a]/self.behaviour_policy[s,a]) * r;
+            den = den + self.state_distribution[s] * (self.target_policy[s,a]/self.behaviour_policy[s,a]);
+        return num/den;

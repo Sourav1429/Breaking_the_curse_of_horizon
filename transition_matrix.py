@@ -16,8 +16,9 @@ def onehot(policy,val,nS):
         pol[i][policy[i]]=1;
     return pol;
 
-def find_transition_matrix(nA,nS,T,policy):
-    policy = onehot(policy,nA,nS)
+def find_transition_matrix(nA,nS,T,policy,onehot_encode=1):
+    if(onehot_encode==1):
+        policy = onehot(policy,nA,nS)
     T_s_s_next = np.zeros((nS,nS));
     for s in range(nS):
         for s_next in range(nS):
@@ -35,6 +36,7 @@ rep_cost = 0.7
 obj = Machine_Replacement(rep_cost,nS,nA);
 P = obj.gen_probability();
 #print(P);
+behaviour_policy=np.array([[0.6,0.4],[0.3,0.7],[0.4,0.6],[0.1,0.9]]);
 policies = np.array([[0,0,0,0],
             [0,0,0,1],
             [0,0,1,1],
@@ -45,4 +47,7 @@ for i in policies:
     print(i,"=========>");
     print(find_transition_matrix(nA,nS,P,i));
     print("==============================================================");
+
+print("Behaviour policy");
+print(find_transition_matrix(nA, nS, P, behaviour_policy,0));
 
