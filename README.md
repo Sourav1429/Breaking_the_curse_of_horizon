@@ -96,5 +96,11 @@ ________________________________________________________________________________
 4) Machine_Replacement_create_env.py: This file is responsible to create our MDP. This is a cost based MDP. This file has a class named Machine_Replacement which take the following as input
      INPUTS:
      --------
-     i) nS: The number of states for which our MDP is to be designed.
-     ii) nA: The number of actions for which our MDP is to be designed.
+     i) nS: The number of states for which our MDP is to be designed. Default value is 6.
+     ii) nA: The number of actions for which our MDP is to be designed. Default value is 2.
+     iii) rep_cost: When we perform the replace action, there is cost involved in doing so, that is specified by the rep_cost variable.
+     
+     Functions:
+     ----------
+     i) gen_probability(): This function generates the probability distribution function for any MDP as long as the nS and nA varibale is give. nA=2 always. So, in             this MDP we have 2 actions perform operation or Replace action. For replace action our agent remains in state 0 for a time instant so only 0th elements of             every row is 1. For perform operation action, the probability is determined by (i+1).(j+1) value for each element divided by sum of each row.
+     ii) gen_reward(): This function automatically generates the reward matrix for the MDP as long as the number of states(nS) is present.
