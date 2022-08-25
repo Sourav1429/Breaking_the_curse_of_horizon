@@ -104,3 +104,9 @@ ________________________________________________________________________________
      ----------
      i) gen_probability(): This function generates the probability distribution function for any MDP as long as the nS and nA varibale is give. nA=2 always. So, in             this MDP we have 2 actions perform operation or Replace action. For replace action our agent remains in state 0 for a time instant so only 0th elements of             every row is 1. For perform operation action, the probability is determined by (i+1).(j+1) value for each element divided by sum of each row.
      ii) gen_reward(): This function automatically generates the reward matrix for the MDP as long as the number of states(nS) is present. 
+_________________________________________________________________________________________________________________________________________________________________________________
+5) transition_simulation.py: In this file, we createa class named Simulate_epiode. Now this class is responsible to generate a long episode starting from a defined start state. 
+INPUTS:
+-------
+T: The total number of time steps that we are playing the episode. 
+,nS,nA,rep_cost,behaviour_policy,state
